@@ -1,0 +1,153 @@
+body {
+    font-family: 'Roboto', sans-serif;
+}
+.text {
+    color: #ffffff;
+    margin-left: 1.5rem;
+    display: block;
+    text-align: center; /* จัดให้อยู่ตรงกลาง */
+    font-size: 24px;
+    font-weight: bold;
+}
+.text br {
+    margin: 5px 0; /* ช่องว่างระหว่างข้อความ */
+}
+a{
+    text-decoration: none;
+}
+.navbar {
+    display: flex;
+    align-items: center;
+    background-color: #333;
+    justify-content: space-between; /* จัดให้เนื้อหาทั้งหมดอยู่ตรงข้ามกัน */
+    position: relative;
+    margin: 0 auto;
+
+}
+
+.navbar-right {
+    margin-right: 1.5rem;
+    font-size: 2.5rem;
+    color: #ffffff;
+}
+.navbar-right a {
+    color: #ffffff; /* ใช้สีของพาเรนต์ */
+    text-decoration: none; /* เอาขีดเส้นใต้ของลิงก์ออก (ถ้ามี) */
+}
+.navbar-center a:hover {
+    background-color: #007bff; /* Blue color on hover */
+    color: #ffffff; /* Keep text white */
+    transform: translateY(-3px); /* Slight movement on hover */
+}
+.navbar-center {
+    position: relative;
+    font-size: 20px;
+    padding: 25px 20px;
+    letter-spacing: 0.10em;
+    display: flex;
+    gap: 20px; /* เพิ่มระยะห่างระหว่างลิงก์ */
+}
+
+.navbar-center a {
+    font-family: 'Roboto', sans-serif;
+    color: #ffffff; /* สีตัวอักษร */
+    text-decoration: none; /* ลบขีดเส้นใต้ */
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+}
+
+.nav-links li {
+    margin: 0 15px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+}
+
+nav-links a:hover {
+    text-decoration: underline;
+}
+
+.product-detail {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.product-container {
+    width: 50%;
+    text-align: center;
+}
+
+.product-container img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.product-container h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.product-container p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.product-container {
+    border: 4px solid #444; /* กรอบรอบกล่องหลัก */
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    display: inline-block;
+}
+
+
+.price {
+    font-size: 22px;
+    color: #e44d26;
+    font-weight: bold;
+}
+
+.exchange {
+    font-size: 18px;
+    color: #007bff;
+    font-style: italic;
+}
+
+.price {
+    font-size: 22px;
+    color: #e44d26;
+    font-weight: bold;
+}
+
+.exchange {
+    font-size: 18px;
+    color: #007bff;
+    font-style: italic;
+}
+.btn_back {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    width: 200px;
+    display: block; /* เปลี่ยนเป็น display: block เพื่อให้สามารถจัดกึ่งกลางได้ */
+    margin: 20px auto; /* ทำให้ปุ่มอยู่ตรงกลางและขยับออกห่างจากด้านบน */
+}
