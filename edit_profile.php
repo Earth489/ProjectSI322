@@ -60,19 +60,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>แก้ไขโปรไฟล์</title>
     <style>
- body {
+        body {
             font-family: 'Roboto', sans-serif;
+            
         }
         .text {
             color: #ffffff;
             margin-left: 1.5rem;
             display: block;
-            text-align: center;
+            text-align: center; /* จัดให้อยู่ตรงกลาง */
             font-size: 24px;
             font-weight: bold;
         }
         .text br {
-            margin: 5px 0;
+            margin: 5px 0; /* ช่องว่างระหว่างข้อความ */
         }
         a{
             text-decoration: none;
@@ -81,23 +82,25 @@
             display: flex;
             align-items: center;
             background-color: #333;
-            justify-content: space-between;
+            justify-content: space-between; /* จัดให้เนื้อหาทั้งหมดอยู่ตรงข้ามกัน */
             position: relative;
             margin: 0 auto;
+
         }
+
         .navbar-right {
             margin-right: 1.5rem;
             font-size: 2.5rem;
             color: #ffffff;
         }
         .navbar-right a {
-            color: #ffffff;
-            text-decoration: none;
+            color: #ffffff; /* ใช้สีของพาเรนต์ */
+            text-decoration: none; /* เอาขีดเส้นใต้ของลิงก์ออก (ถ้ามี) */
         }
         .navbar-center a:hover {
-            background-color: #007bff;
-            color: #ffffff;
-            transform: translateY(-3px);
+            background-color: #007bff; /* Blue color on hover */
+            color: #ffffff; /* Keep text white */
+            transform: translateY(-3px); /* Slight movement on hover */
         }
         .navbar-center {
             position: relative;
@@ -105,12 +108,13 @@
             padding: 25px 20px;
             letter-spacing: 0.10em;
             display: flex;
-            gap: 20px;
+            gap: 5s0px; /* เพิ่มระยะห่างระหว่างลิงก์ */
         }
+
         .navbar-center a {
             font-family: 'Roboto', sans-serif;
-            color: #ffffff;
-            text-decoration: none;
+            color: #ffffff; /* สีตัวอักษร */
+            text-decoration: none; /* ลบขีดเส้นใต้ */
             padding: 10px 20px;
             border-radius: 5px;
         }
@@ -177,20 +181,26 @@
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="main_product_post.php"><span class="text">แลกเปลี่ยนทรัพยากร</span></a>
-        <div class="navbar-center">
-            <a href="notification.php">แจ้งเตือน</a>
-            <a href="history.php">ดูประวัติการแลกเปลี่ยน</a>
-        </div>
-        <div class="navbar-right">
-            <a href="profile.php"><span><i class="fa-regular fa-user"></i></span></a>
-        </div>
+<div class="navbar">
+    <a href="main_product_post.php">
+        <span class="text">
+            แลกเปลี่ยน<br>
+            ทรัพยากร
+        </span>
+    </a>
+    <div class="navbar-center">
+        <a href="notification.php">แจ้งเตือน</a>
+        <a href="matchslist.php">รายการจับคู่</a>
+        <a href="history.php">ดูประวัติการแลกเปลี่ยน</a>
     </div>
+    <div class="navbar-right">
+        <a href="profile.php"><span><i class="fa-regular fa-user"></i></span></a>
+    </div>
+</div>
 
     <div class="container">
         <div class="profile-container">
-            <h2>โปรไฟล์</h2>
+            <h2>แก้ไขโปรไฟล์</h2>
             <form action="edit_profile.php" method="POST">
                 <div class="form-group">
                     <label for="firstname">ชื่อ</label>

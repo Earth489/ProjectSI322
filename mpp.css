@@ -47,7 +47,7 @@ a{
     padding: 25px 20px;
     letter-spacing: 0.10em;
     display: flex;
-    gap: 20px; /* เพิ่มระยะห่างระหว่างลิงก์ */
+    gap: 5s0px; /* เพิ่มระยะห่างระหว่างลิงก์ */
 }
 
 .navbar-center a {

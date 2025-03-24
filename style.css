@@ -189,3 +189,31 @@ nav-links a:hover {
 .buttons button:hover {
     opacity: 0.8;
 }
+/* สไตล์สำหรับ select (ประเภทสินค้า และประเภทสินค้าที่ต้องการแลกเปลี่ยน) */
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+/* สไตล์เมื่อมีการ hover ที่ select */
+.input-group select:hover {
+    border-color: #007bff;
+}
+
+/* สไตล์เมื่อมีการเลือกใน select */
+.input-group select:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(0, 176, 105, 0.3);
+}
+
+/* สไตล์สำหรับ option ภายใน select */
+.input-group select option {
+    padding: 10px;
+    font-size: 16px;
+}

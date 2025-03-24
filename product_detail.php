@@ -8,23 +8,22 @@
         exit();
     }
 
+    if (!isset($_GET['product_Id'])) {
+        echo "ไม่พบสินค้า";
+        exit;
+    }
 
-if (!isset($_GET['product_Id'])) {
-    echo "ไม่พบสินค้า";
-    exit;
-}
+    $product_Id = intval($_GET['product_Id']); // ป้องกัน SQL Injection
 
-$product_Id = intval($_GET['product_Id']); // ป้องกัน SQL Injection
+    $sql = "SELECT * FROM product WHERE product_Id = $product_Id"; // แก้ id เป็น product_Id
+    $result = $conn->query($sql);
 
-$sql = "SELECT * FROM product WHERE product_Id = $product_Id"; // แก้ id เป็น product_Id
-$result = $conn->query($sql);
+    if ($result->num_rows == 0) {
+        echo "ไม่พบสินค้า";
+        exit;
+    }
 
-if ($result->num_rows == 0) {
-    echo "ไม่พบสินค้า";
-    exit;
-}
-
-$row = $result->fetch_assoc();
+    $row = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
@@ -41,22 +40,21 @@ $row = $result->fetch_assoc();
 <body>
 
 <div class="navbar">
-<a href="main_product_post.php">
-<span class="text">
-        แลกเปลี่ยน<br>
-        ทรัพยากร
-    </span>
-
-
+    <a href="main_product_post.php">
+        <span class="text">
+            แลกเปลี่ยน<br>
+            ทรัพยากร
+        </span>
+    </a>
     <div class="navbar-center">
-    <a href="notification.php">แจ้งเตือน</a>
-    <a href="history.php">ดูประวัติการแลกเปลี่ยน</a>
-        </div>
-        <div class="navbar-right">
-    <a href="profile.php"><span><i class="fa-regular fa-user"></i></span></a>
+        <a href="notification.php">แจ้งเตือน</a>
+        <a href="matchslist.php">รายการจับคู่</a>
+        <a href="history.php">ดูประวัติการแลกเปลี่ยน</a>
+    </div>
+    <div class="navbar-right">
+        <a href="profile.php"><span><i class="fa-regular fa-user"></i></span></a>
+    </div>
 </div>
-</div>
-
     <main class="product-detail">
     <div class="product-container">
     
@@ -64,12 +62,47 @@ $row = $result->fetch_assoc();
             <h1><?php echo $row["product_Name"]; ?></h1>
             <p><?php echo $row["product_detail"]; ?></p>
             <p><strong>ราคา:</strong> <span class="price"><?php echo $row["product_price"]; ?></span> บาท</p>
+            <p><strong>ประเภทสินค้า:</strong> <span class="category"><?php echo $row["product_category"]; ?></span></p>
             <p><strong>สินค้าแลกเปลี่ยน:</strong> <span class="exchange"><?php echo $row["Product_exchanged"]; ?></span></p>
-
+            <?php
+        // ตรวจสอบว่าผู้ใช้เป็นเจ้าของสินค้าหรือไม่
+        if ($row['user_id'] != $_SESSION['user_id']) {
+            // แสดงปุ่ม "สนใจแลก"
+            echo '<button class="like-button" data-product-id="'.$row["product_Id"].'" data-user-id="'.$_SESSION['user_id'].'">สนใจแลก</button>';
+        }
+        ?>
         </div>
     
 </main>
 <a href="main_product_post.php" class="btn_back">ย้อนกลับ</a>
+<script>
+$(document).ready(function() {
+    $('.like-button').click(function() {
+        var productId = $(this).data('product-id');
+        var userId = $(this).data('user-id');
+        var button = $(this); // เก็บปุ่มไว้ในตัวแปร
+
+        $.ajax({
+            url: 'add_interested.php',
+            type: 'POST',
+            data: { product_id: productId, user_id: userId },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert(response.message);
+                    button.prop('disabled', true).text('สนใจแล้ว'); // เปลี่ยนสถานะปุ่ม
+                } else {
+                    alert(response.message); // แสดงข้อความแจ้งเตือน
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("เกิดข้อผิดพลาด: " + error);
+                alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            }
+        });
+    });
+});
+</script>
 
 </body>
 </html>

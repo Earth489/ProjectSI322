@@ -13,6 +13,8 @@
         $productDescription = $_POST['product-description'];
         $productPrice = $_POST['product-price'];
         $exchangeItem = $_POST['exchange-item'];
+        $productCategory = $_POST['product-category'];
+        $productStatus = "ต้องการแลก"; // กำหนดสถานะสินค้าเป็น "ต้องการแลก"
 
         $uploadDir = "uploads/";
         if (!file_exists($uploadDir)) {
@@ -39,8 +41,8 @@
         // เพิ่ม user_id ลงในฐานข้อมูล
         $user_id = $_SESSION['user_id'];
 
-        $sql = "INSERT INTO product (product_Name, product_detail, product_price, Product_exchanged, Image, user_id) 
-                VALUES ('$productName', '$productDescription', '$productPrice', '$exchangeItem', '$imageName', '$user_id')";
+        $sql = "INSERT INTO product (product_Name, product_detail, product_price, Product_exchanged, Image, product_category, product_status, user_id) 
+                VALUES ('$productName', '$productDescription', '$productPrice', '$exchangeItem', '$imageName','$productCategory','$productStatus', '$user_id')";
 
         // ตรวจสอบการกรอกข้อมูลราคา
         if (!is_numeric($_POST['product-price'])) {

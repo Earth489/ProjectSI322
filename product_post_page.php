@@ -7,8 +7,8 @@
         header("Location: login.php");
         exit();
     }
-
 ?>   
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -20,25 +20,25 @@
     <title>สร้างโพสต์สินค้า</title>
     <link rel="stylesheet" href="style.css">
 </head>
-        <script src="./js/scriptppp.js"></script>
+<script src="./js/scriptppp.js"></script>
 
 <body>
 
-<div class="navbar">
-<a href="main_product_post.php">
-<span class="text">
-        แลกเปลี่ยน<br>
-        ทรัพยากร
-    </span>
-
-
+<<div class="navbar">
+    <a href="main_product_post.php">
+        <span class="text">
+            แลกเปลี่ยน<br>
+            ทรัพยากร
+        </span>
+    </a>
     <div class="navbar-center">
-    <a href="notification.php">แจ้งเตือน</a>
-    <a href="history.php">ดูประวัติการแลกเปลี่ยน</a>
-        </div>
-        <div class="navbar-right">
-    <a href="profile.php"><span><i class="fa-regular fa-user"></i></span></a>
-</div>
+        <a href="notification.php">แจ้งเตือน</a>
+        <a href="matchslist.php">รายการจับคู่</a>
+        <a href="history.php">ดูประวัติการแลกเปลี่ยน</a>
+    </div>
+    <div class="navbar-right">
+        <a href="profile.php"><span><i class="fa-regular fa-user"></i></span></a>
+    </div>
 </div>
     <div class="container">
         <div class="signup-box">
@@ -47,37 +47,56 @@
                 <main>
                 <div class="image-upload">
                           <label for="file-input">
-                           <div class="placeholder">+</div>
+                           <div class="placeholder"></div>
                            </label>
                      <input type="file" id="file-input" name="product-image" accept="image/*" style="display: none;">
                        <img id="preview-image" src="" alt="ตัวอย่างรูปภาพ" style="display: none; width: 200px; margin-top: 10px;">
                  <p>ใส่รูปที่ต้องการโพสต์สินค้า</p>
             </div>
 
-
                     <div class="form-inputs">
                         <div class="input-group">
                             <label for="product-name">ชื่อสินค้า</label>
-                            <input type="post" id="product-name" name="product-name" required>
+                            <input type="text" id="product-name" name="product-name" required>
                         </div>
                         <div class="input-group">
                             <label for="product-description">รายละเอียดสินค้า</label>
-                            <textarea  type="post"  id="product-description" name="product-description" required></textarea>
+                            <textarea id="product-description" name="product-description" required></textarea>
                         </div>
                         <div class="input-group">
                             <label for="product-price">ราคาสินค้า (ถ้ามี)</label>
-                            <input type="post" type = "number" id="product-price" name="product-price" step="0.01" required >
+                            <input type="number" step="0.01" id="product-price" name="product-price" required>
                         </div>
                         <div class="input-group">
-                            <label for="exchange-item">สินค้าที่ต้องการแลกเปลี่ยน</label>
-                            <input type="post" id="exchange-item" name="exchange-item">
+                            <label for="product-category">ประเภทสินค้า</label>
+                            <select id="product-category" name="product-category" required>
+                                <option value=""> เลือกประเภทสินค้า </option>
+                                <option value="อุปกรณ์อิเล็กทรอนิกส์">อุปกรณ์อิเล็กทรอนิกส์</option>
+                                <option value="เครื่องใช้ในบ้าน">เครื่องใช้ในบ้าน</option>
+                                <option value="เสื้อผ้าและแฟชั่น">เสื้อผ้าและแฟชั่น</option>
+                                <option value="หนังสือและเครื่องเขียน">หนังสือและเครื่องเขียน</option>
+                                <option value="ของเล่นและเกม">ของเล่นและเกม</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="exchange-item">ประเภทสินค้าที่ต้องการแลกเปลี่ยน</label>
+                            <select id="exchange-item" name="exchange-item" required>
+                                <option value=""> เลือกประเภทสินค้าที่ต้องการแลก </option>
+                                <option value="อุปกรณ์อิเล็กทรอนิกส์">อุปกรณ์อิเล็กทรอนิกส์</option>
+                                <option value="เครื่องใช้ในบ้าน">เครื่องใช้ในบ้าน</option>
+                                <option value="เสื้อผ้าและแฟชั่น">เสื้อผ้าและแฟชั่น</option>
+                                <option value="หนังสือและเครื่องเขียน">หนังสือและเครื่องเขียน</option>
+                                <option value="ของเล่นและเกม">ของเล่นและเกม</option>
+                            </select>
                         </div>
                     </div>
-                    
+                    <input type="hidden" name="product_status" value="ต้องการแลก">
+
                     <div class="buttons">
-                    <button type="submit" class="confirm">ยืนยัน</button>
-                    <a href="main_product_post.php"><button type="button" class="cancel">ยกเลิก</button></a>
-                </div>
+                        <button type="submit" class="confirm">ยืนยัน</button>
+                        <a href="main_product_post.php"><button type="button" class="cancel">ยกเลิก</button></a>
+                    </div>
                 </main>
 
             </form>
