@@ -20,68 +20,10 @@ $user_id = $_SESSION['user_id'];
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>รายการจับคู่</title>
-    <link rel="stylesheet" href="mpp.css">
+    <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            
-        }
-        .text {
-            color: #ffffff;
-            margin-left: 1.5rem;
-            display: block;
-            text-align: center; /* จัดให้อยู่ตรงกลาง */
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .text br {
-            margin: 5px 0; /* ช่องว่างระหว่างข้อความ */
-        }
-        a{
-            text-decoration: none;
-        }
-        .navbar {
-            display: flex;
-            align-items: center;
-            background-color: #333;
-            justify-content: space-between; /* จัดให้เนื้อหาทั้งหมดอยู่ตรงข้ามกัน */
-            position: relative;
-            margin: 0 auto;
-
-        }
-
-        .navbar-right {
-            margin-right: 1.5rem;
-            font-size: 2.5rem;
-            color: #ffffff;
-        }
-        .navbar-right a {
-            color: #ffffff; /* ใช้สีของพาเรนต์ */
-            text-decoration: none; /* เอาขีดเส้นใต้ของลิงก์ออก (ถ้ามี) */
-        }
-        .navbar-center a:hover {
-            background-color: #007bff; /* Blue color on hover */
-            color: #ffffff; /* Keep text white */
-            transform: translateY(-3px); /* Slight movement on hover */
-        }
-        .navbar-center {
-            position: relative;
-            font-size: 20px;
-            padding: 25px 20px;
-            letter-spacing: 0.10em;
-            display: flex;
-            gap: 5s0px; /* เพิ่มระยะห่างระหว่างลิงก์ */
-        }
-
-        .navbar-center a {
-            font-family: 'Roboto', sans-serif;
-            color: #ffffff; /* สีตัวอักษร */
-            text-decoration: none; /* ลบขีดเส้นใต้ */
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
+        /* (คง CSS เดิมไว้) */
         .matchslist {
             padding: 20px;
         }
@@ -126,7 +68,7 @@ $user_id = $_SESSION['user_id'];
 
     <div class="matchslist">
         <?php
-        // ดึงข้อมูลการจับคู่ทั้งหมด โดยกรองเฉพาะการจับคู่ที่เกี่ยวข้องกับผู้ใช้ปัจจุบัน
+        // ดึงข้อมูลการจับคู่ทั้งหมด โดยกรองเฉพาะการจับคู่ที่เกี่ยวข้องกับผู้ใช้ปัจจุบัน และมีสถานะเป็น active
         $sql = "SELECT m.*, 
                        po.firstname AS product_owner_name, 
                        iu.firstname AS interested_user_name,
@@ -139,7 +81,7 @@ $user_id = $_SESSION['user_id'];
                 JOIN users iu ON m.interested_user_id = iu.user_id
                 JOIN product pop ON m.product_owner_product_id = pop.product_Id
                 JOIN product iup ON m.interested_user_product_id = iup.product_Id
-                WHERE m.product_owner_id = ? OR m.interested_user_id = ?
+                WHERE (m.product_owner_id = ? OR m.interested_user_id = ?) AND m.status = 'active'
                 ORDER BY m.match_date DESC"; // เรียงลำดับตามวันที่จับคู่ล่าสุด
 
         $stmt = $conn->prepare($sql);
@@ -162,8 +104,31 @@ $user_id = $_SESSION['user_id'];
                 echo '<a href="chat.php?matchs_id=' . $row['matchs_id'] . '" style="padding: 10px 20px; font-size: 16px; border: none; background: blue; color: white; border-radius: 5px; cursor: pointer; text-decoration: none;"><strong>แชท</strong></a>';
                 // เพิ่มปุ่มยกเลิกการจับคู่
                 echo '<button class="cancel-match-btn" data-matchs-id="' . $row['matchs_id'] . '" style="padding: 10px 20px; font-size: 16px; border: none; background: red; color: white; border-radius: 5px; cursor: pointer; margin-left: 10px;"><strong>ยกเลิกการจับคู่</strong></button>';
-                // เพิ่มปุ่มแลกเปลี่ยนสำเร็จ
-                echo '<button class="complete-match-btn" data-matchs-id="' . $row['matchs_id'] . '" style="padding: 10px 20px; font-size: 16px; border: none; background: green; color: white; border-radius: 5px; cursor: pointer; margin-left: 10px;"><strong>แลกเปลี่ยนสำเร็จ</strong></button>';
+
+                // ตรวจสอบว่าผู้ใช้เป็นเจ้าของสินค้าหรือผู้สนใจ
+                $is_owner = ($user_id == $row['product_owner_id']);
+                $is_interested = ($user_id == $row['interested_user_id']);
+
+                // แสดงปุ่ม "แลกเปลี่ยนสำเร็จ" เฉพาะเมื่อผู้ใช้เกี่ยวข้องกับรายการนี้
+                if ($is_owner || $is_interested) {
+                    $button_text = "ยืนยันแลกเปลี่ยนสำเร็จ";
+                    $button_disabled = "";
+
+                    if ($is_owner && $row['product_owner_confirm'] == 1) {
+                        $button_text = "รออีกฝ่ายยืนยัน";
+                        $button_disabled = "disabled";
+                    } elseif ($is_interested && $row['interested_user_confirm'] == 1) {
+                        $button_text = "รออีกฝ่ายยืนยัน";
+                        $button_disabled = "disabled";
+                    }
+                    
+                    if($row['product_owner_confirm'] == 1 && $row['interested_user_confirm'] == 1){
+                        $button_text = "แลกเปลี่ยนสำเร็จ";
+                        $button_disabled = "disabled";
+                    }
+
+                    echo '<button class="complete-match-btn" data-matchs-id="' . $row['matchs_id'] . '" data-user-type="' . ($is_owner ? 'owner' : 'interested') . '" style="padding: 10px 20px; font-size: 16px; border: none; background: green; color: white; border-radius: 5px; cursor: pointer; margin-left: 10px;" ' . $button_disabled . '><strong>' . $button_text . '</strong></button>';
+                }
                 echo "</div>";
             }
         } else {
@@ -193,15 +158,20 @@ $user_id = $_SESSION['user_id'];
         });
         $('.complete-match-btn').click(function() {
             var matchsId = $(this).data('matchs-id');
+            var userType = $(this).data('user-type');
             if (confirm("คุณแน่ใจหรือไม่ว่าการแลกเปลี่ยนนี้สำเร็จแล้ว?")) {
                 $.ajax({
                     url: 'complete_match.php',
                     type: 'POST',
-                    data: { matchs_id: matchsId },
+                    data: { matchs_id: matchsId, user_type: userType },
                     success: function(response) {
                         if (response === 'success') {
                             alert('บันทึกการแลกเปลี่ยนสำเร็จ');
-                            location.reload(); // รีโหลดหน้าเพื่ออัปเดตรายการ
+                            // ไม่ต้องรีโหลดหน้าแล้ว เพราะรายการจะหายไปเอง
+                            //location.reload();
+                        } else if (response === 'waiting') {
+                            alert('รออีกฝ่ายยืนยัน');
+                            location.reload();
                         } else {
                             alert('เกิดข้อผิดพลาดในการบันทึกการแลกเปลี่ยน');
                         }

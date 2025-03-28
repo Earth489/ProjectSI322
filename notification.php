@@ -31,6 +31,7 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
     <style>
         /* เพิ่ม CSS สำหรับการแสดงรายการสินค้า */
         .product-list {
@@ -64,91 +65,75 @@ $result = $stmt->get_result();
         .product-list p {
             margin: 5px 0;
         }
-        body {
-            font-family: 'Roboto', sans-serif;
-        }
-        .text {
-            color: #ffffff;
-            margin-left: 1.5rem;
-            display: block;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .text br {
-            margin: 5px 0;
-        }
-        a{
-            text-decoration: none;
-        }
-        
-        body {
-            font-family: 'Roboto', sans-serif;
-            
-        }
-        .text {
-            color: #ffffff;
-            margin-left: 1.5rem;
-            display: block;
-            text-align: center; /* จัดให้อยู่ตรงกลาง */
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .text br {
-            margin: 5px 0; /* ช่องว่างระหว่างข้อความ */
-        }
-        a{
-            text-decoration: none;
-        }
-        .navbar {
-            display: flex;
-            align-items: center;
-            background-color: #333;
-            justify-content: space-between; /* จัดให้เนื้อหาทั้งหมดอยู่ตรงข้ามกัน */
-            position: relative;
-            margin: 0 auto;
-
-        }
-
-        .navbar-right {
-            margin-right: 1.5rem;
-            font-size: 2.5rem;
-            color: #ffffff;
-        }
-        .navbar-right a {
-            color: #ffffff; /* ใช้สีของพาเรนต์ */
-            text-decoration: none; /* เอาขีดเส้นใต้ของลิงก์ออก (ถ้ามี) */
-        }
-        .navbar-center a:hover {
-            background-color: #007bff; /* Blue color on hover */
-            color: #ffffff; /* Keep text white */
-            transform: translateY(-3px); /* Slight movement on hover */
-        }
-        .navbar-center {
-            position: relative;
-            font-size: 20px;
-            padding: 25px 20px;
-            letter-spacing: 0.10em;
-            display: flex;
-            gap: 5s0px; /* เพิ่มระยะห่างระหว่างลิงก์ */
-        }
-
-        .navbar-center a {
-            font-family: 'Roboto', sans-serif;
-            color: #ffffff; /* สีตัวอักษร */
-            text-decoration: none; /* ลบขีดเส้นใต้ */
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
         .interested-product-image {
             width: 150px; /* ปรับขนาดความกว้างตามต้องการ */
             height: auto; /* ให้ความสูงปรับตามสัดส่วน */
-            display: block;
+
             margin: 0 auto 10px;
             object-fit: cover; /* ครอบตัดรูปภาพให้พอดีกับขนาดที่กำหนด */
             object-position: center; /* จัดตำแหน่งรูปภาพให้อยู่ตรงกลาง */
         }
+        .cancel-button {
+            background-color: #f44336; /* Red */
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .cancel-button:hover {
+            opacity: 0.8;
+        }
+        /* CSS ใหม่สำหรับจัดตำแหน่งปุ่ม */
+        .button-container {
+            display: flex;
+            justify-content: flex-start; /* จัดให้ปุ่มอยู่ชิดซ้าย */
+            align-items: center; /* จัดให้ปุ่มอยู่ตรงกลางแนวตั้ง */
+            margin-top: 10px; /* เพิ่มระยะห่างด้านบน */
+            gap: 10px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+        }
+
+        .match-button {
+            background-color: #007bff; /* Blue */
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .match-button:hover {
+            opacity: 0.8;
+        }
     </style>
+    <script>
+        function cancelInterest(interestedId) {
+            if (confirm("คุณต้องการยกเลิกการสนใจนี้หรือไม่?")) {
+                fetch('cancel_interested.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'interested_id=' + interestedId,
+                })
+                .then(response => response.text())
+                .then(data => {
+                    if (data === 'success') {
+                        alert('ยกเลิกการสนใจสำเร็จ');
+                        location.reload(); // รีโหลดหน้าเพื่ออัปเดตข้อมูล
+                    } else {
+                        alert('เกิดข้อผิดพลาดในการยกเลิกการสนใจ');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="navbar">
@@ -198,18 +183,27 @@ $result = $stmt->get_result();
                                     echo "<ul>";
                                     $has_product = true; // เพิ่มตัวแปรตรวจสอบว่ามีสินค้าหรือไม่
                                     while ($product_row = $product_result->fetch_assoc()) {
-                                        echo "<li>";
-                                        echo "<img src='uploads/".$product_row['Image']."' alt='".$product_row['product_Name']."'>";
-                                        // ตรวจสอบว่า $has_product เป็น true ก่อนแสดง radio button
-                                        if ($has_product) {
-                                            echo "<p><input type='radio' name='selected_product_id[".$row['interested_id']."]' value='".$product_row['product_Id']."'> ".$product_row['product_Name']."</p>";
+                                        // ตรวจสอบว่าสินค้าถูกจับคู่แล้วหรือไม่
+                                        $match_sql = "SELECT * FROM matchs WHERE (product_owner_product_id = ? OR interested_user_product_id = ?) AND status != 'completed' AND status != 'canceled'";
+                                        $match_stmt = $conn->prepare($match_sql);
+                                        $match_stmt->bind_param("ii", $product_row['product_Id'], $product_row['product_Id']);
+                                        $match_stmt->execute();
+                                        $match_result = $match_stmt->get_result();
+
+                                        if ($match_result->num_rows == 0) { // ถ้าไม่พบในตาราง matchs
+                                            echo "<li>";
+                                            echo "<img src='uploads/".$product_row['Image']."' alt='".$product_row['product_Name']."'>";
+                                            // ตรวจสอบว่า $has_product เป็น true ก่อนแสดง radio button
+                                            if ($has_product) {
+                                                echo "<p><input type='radio' name='selected_product_id[".$row['interested_id']."]' value='".$product_row['product_Id']."'> ".$product_row['product_Name']."</p>";
+                                            }
+                                            // เพิ่มข้อมูล product_detail, product_price, Product_exchanged, product_category
+                                            echo "<p><strong>รายละเอียด:</strong> ".$product_row['product_detail']."</p>";
+                                            echo "<p><strong>ราคา:</strong> ".$product_row['product_price']." บาท</p>";
+                                            echo "<p><strong>สินค้าแลกเปลี่ยน:</strong> ".$product_row['Product_exchanged']."</p>";
+                                            echo "<p><strong>ประเภทสินค้า:</strong> ".$product_row['product_category']."</p>";
+                                            echo "</li>";
                                         }
-                                        // เพิ่มข้อมูล product_detail, product_price, Product_exchanged, product_category
-                                        echo "<p><strong>รายละเอียด:</strong> ".$product_row['product_detail']."</p>";
-                                        echo "<p><strong>ราคา:</strong> ".$product_row['product_price']." บาท</p>";
-                                        echo "<p><strong>สินค้าแลกเปลี่ยน:</strong> ".$product_row['Product_exchanged']."</p>";
-                                        echo "<p><strong>ประเภทสินค้า:</strong> ".$product_row['product_category']."</p>";
-                                        echo "</li>";
                                     }
                                     echo "</ul>";
                                 } else {
@@ -218,13 +212,16 @@ $result = $stmt->get_result();
                                 }
                             ?>
                         </div>
-                        <input type="hidden" name="product_owner_id" value="<?php echo $user_id; ?>">
-                        <input type="hidden" name="product_owner_product_id" value="<?php echo $row['product_id']; ?>">
-                        <input type="hidden" name="interested_user_id" value="<?php echo $row['user_id']; ?>">
+                        <div class="button-container">
+                            <button type="submit" class="match-button">จับคู่</button>
+                            <input type="hidden" name="product_owner_id" value="<?php echo $user_id; ?>">
+                            <input type="hidden" name="product_owner_product_id" value="<?php echo $row['product_id']; ?>">
+                            <input type="hidden" name="interested_user_id" value="<?php echo $row['user_id']; ?>">
+                            <button type="button" class="cancel-button" onclick="cancelInterest(<?php echo $row['interested_id']; ?>)">ยกเลิก</button>
+                        </div>
                     </li>
                 <?php endwhile; ?>
             </ul>
-            <button type="submit" class="btn btn-primary">จับคู่</button>
             </form>
         <?php else: ?>
             <p>ไม่มีการแจ้งเตือน</p>

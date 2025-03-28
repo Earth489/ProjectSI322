@@ -150,7 +150,7 @@ $receiver_id = ($user_id == $row['product_owner_id']) ? $row['interested_user_id
     <div class="chat-container">
         <!-- เพิ่มปุ่มย้อนกลับ -->
         <a href="matchslist.php" class="back-btn">ย้อนกลับ</a>
-        <h2>แชทกับ <?php echo ($user_id == $row['product_owner_id']) ? $row['interested_user_name'] : $row['product_owner_name']; ?></h2>
+        <h2><?php echo ($user_id == $row['product_owner_id']) ? $row['interested_user_name'] : $row['product_owner_name']; ?></h2>
         <div class="chat-messages" id="chat-messages">
             <!-- ข้อความจะถูกโหลดที่นี่ -->
         </div>

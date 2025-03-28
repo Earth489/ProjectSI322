@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 24, 2025 at 12:36 PM
+-- Generation Time: Mar 28, 2025 at 09:02 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -43,13 +43,10 @@ CREATE TABLE `chats` (
 --
 
 INSERT INTO `chats` (`chat_id`, `matchs_id`, `sender_id`, `sender_firstname`, `sender_lastname`, `receiver_id`, `message`, `timestamp`) VALUES
-(1, 3, 14, NULL, NULL, 2, '123', '2025-03-24 01:09:07'),
-(2, 3, 2, NULL, NULL, 14, 'fsefse', '2025-03-24 01:09:15'),
-(3, 3, 2, NULL, NULL, 14, 'ดพกดพด', '2025-03-24 01:12:14'),
-(4, 3, 14, NULL, NULL, 2, 'ดพกดกพ', '2025-03-24 01:12:30'),
-(5, 3, 14, NULL, NULL, 2, 'fesfes', '2025-03-24 01:15:12'),
-(6, 3, 2, 'อนิวัตติ์', 'ยานาบัว', 14, 'gdrgrd', '2025-03-24 01:55:38'),
-(7, 3, 2, 'อนิวัตติ์', 'ยานาบัว', 14, 'กไฟ', '2025-03-24 01:56:47');
+(25, 27, 14, 'test111', 'test123', 2, 'aaaa', '2025-03-27 08:05:04'),
+(26, 27, 2, 'อนิวัตติ์', 'ยานาบัว', 14, 'bbbbb', '2025-03-27 08:05:09'),
+(27, 27, 14, 'test111', 'test123', 2, 'grgrdg', '2025-03-27 08:05:14'),
+(28, 27, 2, 'อนิวัตติ์', 'ยานาบัว', 14, 'frfrd', '2025-03-27 08:05:18');
 
 -- --------------------------------------------------------
 
@@ -61,8 +58,8 @@ CREATE TABLE `history` (
   `history_id` int(11) NOT NULL,
   `matchs_id` int(11) DEFAULT NULL,
   `product_owner_id` int(11) DEFAULT NULL,
-  `product_owner_product_id` int(11) DEFAULT NULL,
   `interested_user_id` int(11) DEFAULT NULL,
+  `product_owner_product_id` int(11) DEFAULT NULL,
   `interested_user_product_id` int(11) DEFAULT NULL,
   `exchange_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -87,7 +84,7 @@ CREATE TABLE `interested` (
 --
 
 INSERT INTO `interested` (`interested_id`, `product_id`, `user_id`, `interested_date`, `status`, `selected_product_id`) VALUES
-(9, 61, 14, '2025-03-16 12:39:24', '', NULL);
+(41, 86, 14, '2025-03-27 07:56:50', '', NULL);
 
 -- --------------------------------------------------------
 
@@ -101,15 +98,18 @@ CREATE TABLE `matchs` (
   `product_owner_product_id` int(11) DEFAULT NULL,
   `interested_user_id` int(11) DEFAULT NULL,
   `interested_user_product_id` int(11) DEFAULT NULL,
-  `match_date` timestamp NOT NULL DEFAULT current_timestamp()
+  `match_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` varchar(20) DEFAULT 'active',
+  `product_owner_confirm` tinyint(4) DEFAULT 0,
+  `interested_user_confirm` tinyint(4) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `matchs`
 --
 
-INSERT INTO `matchs` (`matchs_id`, `product_owner_id`, `product_owner_product_id`, `interested_user_id`, `interested_user_product_id`, `match_date`) VALUES
-(3, 2, 61, 14, 59, '2025-03-18 06:42:43');
+INSERT INTO `matchs` (`matchs_id`, `product_owner_id`, `product_owner_product_id`, `interested_user_id`, `interested_user_product_id`, `match_date`, `status`, `product_owner_confirm`, `interested_user_confirm`) VALUES
+(27, 2, 86, 14, 87, '2025-03-27 08:02:28', 'active', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -134,18 +134,8 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`product_Id`, `product_Name`, `product_detail`, `Image`, `product_price`, `Product_exchanged`, `user_id`, `product_category`, `product_status`) VALUES
-(48, 'เก้าอีทำงาน', '', 'chair.jpg', 1500.00, 'เก้าอี', 2, '', ''),
-(49, 'เครื่องดูดฝุ่น', 'ระบบกรองฝุ่นแบบ:กรองฝุ่น 2 ชั้น แยกเป็นกรองหยาบ กับกรองละเอียด\r\n', 'vacuumcleaner.jpg', 3000.00, 'เครื่องใช้ไฟฟ้า', 2, '', ''),
-(50, 'vans old skool', 'สีดำ ไซส์ 42 ', 'vansoldskool.jpg', 1700.00, 'รองเท้า', 2, '', ''),
-(55, 'หม้อหุงข้าว', 'aaa', 'ricecooker.jpg', 1000.00, 'เครื่องใช้ไฟฟ้า', 15, '', ''),
-(56, 'หม้อหุงข้าว', 'gerdgfd', 'ricecooker.jpg', 1000.00, '', 2, '', ''),
-(57, 'fesfes', 'fesfes', 'microwave.jpg', 2323.00, '1', 2, '1', ''),
-(58, 'frfr', 'frddr', 'airfrye.jpg', 10000.00, 'ของเล่นและเกม', 2, 'หนังสือและเครื่องเขียน', ''),
-(59, 'dawsdaxassa', 'gfrdg', 'ricecooker.jpg', 1223.00, 'เครื่องใช้ในบ้าน', 14, 'เครื่องใช้ในบ้าน', ''),
-(60, 'yjyju', 'ku8khk', 'microwave.jpg', 1233.00, 'เครื่องใช้ในบ้าน', 14, 'เครื่องใช้ในบ้าน', ''),
-(61, 'grgr', 'grgdr', 'airfrye.jpg', 1234.00, 'เครื่องใช้ในบ้าน', 2, 'เครื่องใช้ในบ้าน', ''),
-(62, 'frdfrdf', '12335pou', 'user (1).png', 1111.00, 'อุปกรณ์อิเล็กทรอนิกส์', 2, 'อุปกรณ์อิเล็กทรอนิกส์', ''),
-(63, 'frfrdf', 'grdgrdg', 'user (2).png', 1111.00, 'หนังสือและเครื่องเขียน', 2, 'หนังสือและเครื่องเขียน', 'ต้องการแลก');
+(86, 'ไมโครเวฟ', 'ไมโครเวฟ', 'microwave.jpg', 3000.00, 'เครื่องใช้ในบ้าน', 2, 'เครื่องใช้ในบ้าน', 'ต้องการแลก'),
+(87, 'หม้อหุ้งข้าว', 'หม้อหุ้งข้าว', 'ricecooker.jpg', 3000.00, 'เครื่องใช้ในบ้าน', 14, 'เครื่องใช้ในบ้าน', 'ต้องการแลก');
 
 -- --------------------------------------------------------
 
@@ -176,7 +166,8 @@ INSERT INTO `users` (`user_id`, `email`, `password`, `firstname`, `lastname`, `g
 (2, 'earthaniwat@gmail.com', '12345678aa', 'อนิวัตติ์', 'ยานาบัว', 'ชาย', '0936048915', '2003-12-29', '418/1 จัสมินอพาร์เมนต์ ซ.ประชาสงเคราะห์ 29 แขวงดินแดง เขตดินแดง 10400', 'หอการค้า', 'user', 'user.png'),
 (10, 'admin@gmail.com', 'admin123', 'tester', 'admin', 'อื่นๆ', '0936048915', '2025-01-01', '..', '..', 'admin', NULL),
 (14, 'test@gmail.com', '12345678aa', 'test111', 'test123', 'ชาย', '08888888', '2025-03-01', 'desdes', 'dedes', 'user', NULL),
-(15, 'chadarat@gmail.com', '12345678aa', 'chadar11', 'chadarat', 'หญิง', '08888888', '2025-03-01', 'aaaa', 'aaaa', 'user', NULL);
+(15, 'chadarat@gmail.com', '12345678aa', 'chadar11', 'chadarat', 'หญิง', '08888888', '2025-03-01', 'aaaa', 'aaaa', 'user', NULL),
+(16, 'test11@gmail.com', '12345678aa', 'test112', 'test113', 'ชาย', '08888888', '2025-03-14', 'aaaaaa', 'bbbbbb', 'user', NULL);
 
 --
 -- Indexes for dumped tables
@@ -241,37 +232,37 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `chats`
 --
 ALTER TABLE `chats`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `history`
 --
 ALTER TABLE `history`
-  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `interested`
 --
 ALTER TABLE `interested`
-  MODIFY `interested_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `interested_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `matchs`
 --
 ALTER TABLE `matchs`
-  MODIFY `matchs_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `matchs_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `product_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `user_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables
