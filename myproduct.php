@@ -17,7 +17,7 @@ if (!isset($_SESSION['user_id'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <title>รายการสินค้า</title>
+    <title>สินค้าของฉัน</title>
     <link rel="stylesheet" href="mpp.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -46,8 +46,8 @@ if (!isset($_SESSION['user_id'])) {
 <main>
     <a class="post btn btn-primary" href="product_post_page.php">โพสสินค้า</a>
 
-    <h1 style="text-align: center; margin-bottom: 20px;">สินค้าแลกเปลี่ยน</h1>
-    
+    <h1 style="text-align: center; margin-bottom: 20px;">สินค้าของฉัน</h1>
+
     <div class="item-list">
         <?php
         // ดึงข้อมูลสินค้าจากฐานข้อมูลและชื่อผู้ใช้จากตาราง users
@@ -61,7 +61,7 @@ if (!isset($_SESSION['user_id'])) {
         WHERE (i.status IS NULL OR i.status != 'matched') 
         AND m_owner.matchs_id IS NULL 
         AND m_interested.matchs_id IS NULL
-        AND p.user_id != '".$_SESSION['user_id']."'  /* เพิ่มเงื่อนไขนี้เพื่อกรองสินค้าของผู้ใช้ที่ล็อกอิน */
+        AND p.user_id = '".$_SESSION['user_id']."'  /* กรองเฉพาะสินค้าของผู้ใช้งานที่ล็อกอิน */
         GROUP BY p.product_Id";
 
         $result = $conn->query($sql);
@@ -77,7 +77,6 @@ if (!isset($_SESSION['user_id'])) {
                 echo '<p><strong>ราคา:</strong> ' . $row["product_price"] . ' บาท</p>';
                 echo '<p><strong>สินค้าแลกเปลี่ยน:</strong> ' . $row["Product_exchanged"] . '</p>';
                 echo '<p><strong>ประเภทสินค้า:</strong> ' . $row["product_category"] . '</p>';
-                echo '<button class="like-button" data-product-id="' . $row["product_Id"] . '" data-user-id="' . $_SESSION['user_id'] . '">สนใจแลก</button>';
                 echo '</div>';
             }
         } else {

@@ -42,7 +42,7 @@
                             $_SESSION['user_id'] = $email["user_id"];
                             header("Location: main_product_post.php");
                             exit();
-                        } elseif($user['user_type'] === 'admin') {
+                        } elseif ($email['user_type'] === 'admin') {
 
                             $_SESSION['admin_email'] = $email['email'];
                             $_SESSION['admin_id'] = $email['user_id'];

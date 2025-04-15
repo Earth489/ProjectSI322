@@ -27,21 +27,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
 
-        // บันทึกข้อมูลการจับคู่ลงในตาราง matchs
-        $sql = "INSERT INTO matchs (product_owner_id, product_owner_product_id, interested_user_id, interested_user_product_id)
-                VALUES (?, ?, ?, ?)";
+        // บันทึกข้อมูลการจับคู่ลงในตาราง matchs (เพิ่ม interested_id)
+        $sql = "INSERT INTO matchs (product_owner_id, product_owner_product_id, interested_user_id, interested_user_product_id, interested_id)
+        VALUES (?, ?, ?, ?, ?)"; // เพิ่ม ? ตัวที่ 5
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iiii", $product_owner_id, $product_owner_product_id, $interested_user_id, $interested_user_product_id);
+        // *** เพิ่ม 'i' และ $interested_id ใน bind_param ***
+        $stmt->bind_param("iiiii", $product_owner_id, $product_owner_product_id, $interested_user_id, $interested_user_product_id, $interested_id);
 
         if ($stmt->execute()) {
-            // ดึง matchs_id ล่าสุด
             $matchs_id = $conn->insert_id;
-
-            // อัปเดตสถานะในตาราง interested เป็น 'matched'
+        
+            // อัปเดตสถานะในตาราง interested (เหมือนเดิม)
             $update_sql = "UPDATE interested SET status = 'matched' WHERE interested_id = ?";
             $update_stmt = $conn->prepare($update_sql);
             $update_stmt->bind_param("i", $interested_id);
             $update_stmt->execute();
+            $update_stmt->close(); // ควร close statement ที่ใช้เสร็จแล้ว
 
             // Redirect ไปยังหน้า match_success.php พร้อมกับ matchs_id
             header("Location: match_success.php?matchs_id=" . $matchs_id);

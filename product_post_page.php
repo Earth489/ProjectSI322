@@ -23,8 +23,7 @@
 <script src="./js/scriptppp.js"></script>
 
 <body>
-
-<<div class="navbar">
+<div class="navbar">
     <a href="main_product_post.php">
         <span class="text">
             แลกเปลี่ยน<br>
@@ -32,6 +31,7 @@
         </span>
     </a>
     <div class="navbar-center">
+        <a href="myproduct.php">สินค้าของฉัน</a>
         <a href="notification.php">แจ้งเตือน</a>
         <a href="matchslist.php">รายการจับคู่</a>
         <a href="history.php">ดูประวัติการแลกเปลี่ยน</a>
@@ -39,6 +39,7 @@
     <div class="navbar-right">
         <a href="profile.php"><span><i class="fa-regular fa-user"></i></span></a>
     </div>
+</div>
 </div>
     <div class="container">
         <div class="signup-box">

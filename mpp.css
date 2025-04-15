@@ -104,7 +104,6 @@ main {
     justify-content: center; /* จัดให้อยู่ตรงกลางแนวนอน */
     align-items: center; /* จัดให้ข้อความอยู่ตรงกลางแนวตั้ง */
     width: 200px;
-    margin: 30px 1.5rem; /* จัดตำแหน่งให้ห่างจากขอบซ้าย */
     padding: 12px 20px;
     background-color: #007bff; /* สีน้ำเงิน */
     color: white;

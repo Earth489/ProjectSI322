@@ -20,31 +20,119 @@ $user_id = $_SESSION['user_id'];
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <title>รายการจับคู่</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css"> <!-- ตรวจสอบว่าไฟล์ CSS นี้มีอยู่จริง -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* (คง CSS เดิมไว้) */
+        /* (คง CSS เดิมไว้ หรือปรับปรุงตามต้องการ) */
         .matchslist {
             padding: 20px;
+            max-width: 900px; /* หรือความกว้างที่เหมาะสม */
+            margin: 20px auto; /* จัดกลาง */
         }
         .match-item {
             background-color: #f9f9f9;
             border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-        .match-item img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            object-position: center;
-            margin-right: 10px;
-            border-radius: 5px;
+            padding: 15px; /* เพิ่ม padding */
+            margin-bottom: 15px; /* เพิ่มระยะห่าง */
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .match-item .product-info {
             display: flex;
             align-items: center;
+            margin-bottom: 10px; /* เพิ่มระยะห่างระหว่างข้อมูลสินค้า */
+        }
+        .match-item img {
+            width: 80px; /* ปรับขนาดรูปภาพ */
+            height: 80px;
+            object-fit: cover;
+            object-position: center;
+            margin-right: 15px; /* เพิ่มระยะห่าง */
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+        .match-item p {
+            margin-bottom: 5px; /* ลดระยะห่างของ p */
+            font-size: 0.95em; /* ปรับขนาดฟอนต์ */
+        }
+        .match-item .actions {
+            margin-top: 15px; /* เพิ่มระยะห่างด้านบนของปุ่ม */
+            display: flex; /* จัดปุ่มแนวนอน */
+            gap: 10px; /* ระยะห่างระหว่างปุ่ม */
+            flex-wrap: wrap; /* ให้ปุ่มขึ้นบรรทัดใหม่ได้ */
+        }
+        .match-item .actions button,
+        .match-item .actions a {
+            padding: 8px 15px; /* ปรับขนาด padding */
+            font-size: 0.9em; /* ปรับขนาดฟอนต์ */
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            color: white;
+            text-align: center;
+        }
+        .chat-btn { background-color: #007bff; } /* สีน้ำเงิน */
+        .confirm-exchange-btn { background-color: #28a745; } /* สีเขียว */
+        .cancel-match-btn { background-color: #dc3545; } /* สีแดง */
+        .confirm-exchange-btn:disabled {
+            background-color: #6c757d; /* สีเทาเมื่อ disable */
+            cursor: not-allowed;
+        }
+        .status-text {
+            font-style: italic;
+            color: #6c757d;
+            margin-left: 10px;
+        }
+         /* Navbar styles (อาจจะนำมาจากไฟล์อื่น) */
+         .navbar {
+            display: flex;
+            align-items: center;
+            background-color: #333;
+            justify-content: space-between;
+            position: relative;
+            margin: 0 auto;
+            padding: 10px 0; /* Add some padding */
+        }
+        .navbar a {
+            text-decoration: none;
+        }
+        .navbar .text {
+            color: #ffffff;
+            margin-left: 1.5rem;
+            display: block;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 1.2; /* Adjust line height */
+        }
+        .navbar-center {
+            display: flex;
+            gap: 20px; /* Space between links */
+            justify-content: center; /* Center the links */
+            flex-grow: 1; /* Allow center to take up space */
+        }
+        .navbar-center a {
+            font-family: 'Roboto', sans-serif;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 20px;
+            transition: background-color 0.3s, transform 0.3s; /* Smooth transition */
+        }
+        .navbar-center a:hover {
+            background-color: #007bff;
+            color: #ffffff;
+            transform: translateY(-3px);
+        }
+        .navbar-right {
+            margin-right: 1.5rem;
+        }
+        .navbar-right a {
+            color: #ffffff;
+            font-size: 2.5rem;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -57,6 +145,7 @@ $user_id = $_SESSION['user_id'];
         </span>
     </a>
     <div class="navbar-center">
+        <a href="myproduct.php">สินค้าของฉัน</a>
         <a href="notification.php">แจ้งเตือน</a>
         <a href="matchslist.php">รายการจับคู่</a>
         <a href="history.php">ดูประวัติการแลกเปลี่ยน</a>
@@ -66,120 +155,188 @@ $user_id = $_SESSION['user_id'];
     </div>
 </div>
 
-    <div class="matchslist">
-        <?php
-        // ดึงข้อมูลการจับคู่ทั้งหมด โดยกรองเฉพาะการจับคู่ที่เกี่ยวข้องกับผู้ใช้ปัจจุบัน และมีสถานะเป็น active
-        $sql = "SELECT m.*, 
-                       po.firstname AS product_owner_name, 
-                       iu.firstname AS interested_user_name,
-                       pop.product_Name AS product_owner_product_name,
-                       pop.Image AS product_owner_product_image,
-                       iup.product_Name AS interested_user_product_name,
-                       iup.Image AS interested_user_product_image
-                FROM matchs m
-                JOIN users po ON m.product_owner_id = po.user_id
-                JOIN users iu ON m.interested_user_id = iu.user_id
-                JOIN product pop ON m.product_owner_product_id = pop.product_Id
-                JOIN product iup ON m.interested_user_product_id = iup.product_Id
-                WHERE (m.product_owner_id = ? OR m.interested_user_id = ?) AND m.status = 'active'
-                ORDER BY m.match_date DESC"; // เรียงลำดับตามวันที่จับคู่ล่าสุด
+<div class="matchslist">
+    <h1 style="text-align: center; margin-bottom: 30px;">รายการจับคู่</h1>
+    <?php
+    // ดึงข้อมูลการจับคู่ทั้งหมด โดยกรองเฉพาะการจับคู่ที่เกี่ยวข้องกับผู้ใช้ปัจจุบัน และมีสถานะเป็น active
+    // เพิ่ม owner_confirmed และ interested_confirmed ใน SELECT
+    $sql = "SELECT m.*,
+                   po.firstname AS product_owner_name,
+                   iu.firstname AS interested_user_name,
+                   pop.product_Name AS product_owner_product_name,
+                   pop.Image AS product_owner_product_image,
+                   iup.product_Name AS interested_user_product_name,
+                   iup.Image AS interested_user_product_image
+            FROM matchs m
+            JOIN users po ON m.product_owner_id = po.user_id
+            JOIN users iu ON m.interested_user_id = iu.user_id
+            JOIN product pop ON m.product_owner_product_id = pop.product_Id
+            JOIN product iup ON m.interested_user_product_id = iup.product_Id
+            WHERE (m.product_owner_id = ? OR m.interested_user_id = ?) AND m.status = 'active'
+            ORDER BY m.match_date DESC"; // เรียงลำดับตามวันที่จับคู่ล่าสุด
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ii", $user_id, $user_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        die("Prepare failed: (" . $conn->errno . ") " . $conn->error);
+    }
+    $stmt->bind_param("ii", $user_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                echo "<div class='match-item'>";
-                echo "<div class='product-info'>";
-                echo "<img src='uploads/" . $row['product_owner_product_image'] . "' alt='" . $row['product_owner_product_name'] . "'>";
-                echo "<p><strong>สินค้าของคุณ:</strong> " . $row['product_owner_product_name'] . " (เจ้าของ: " . $row['product_owner_name'] . ")</p>";
-                echo "</div>";
-                echo "<div class='product-info'>";
-                echo "<img src='uploads/" . $row['interested_user_product_image'] . "' alt='" . $row['interested_user_product_name'] . "'>";
-                echo "<p><strong>สินค้าที่สนใจ:</strong> " . $row['interested_user_product_name'] . " (ผู้สนใจ: " . $row['interested_user_name'] . ")</p>";
-                echo "</div>";
-                echo "<p><strong>วันที่จับคู่:</strong> " . $row['match_date'] . "</p>";
-                echo '<a href="chat.php?matchs_id=' . $row['matchs_id'] . '" style="padding: 10px 20px; font-size: 16px; border: none; background: blue; color: white; border-radius: 5px; cursor: pointer; text-decoration: none;"><strong>แชท</strong></a>';
-                // เพิ่มปุ่มยกเลิกการจับคู่
-                echo '<button class="cancel-match-btn" data-matchs-id="' . $row['matchs_id'] . '" style="padding: 10px 20px; font-size: 16px; border: none; background: red; color: white; border-radius: 5px; cursor: pointer; margin-left: 10px;"><strong>ยกเลิกการจับคู่</strong></button>';
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo "<div class='match-item' id='match-item-" . $row['matchs_id'] . "'>"; // เพิ่ม ID ให้ div
 
-                // ตรวจสอบว่าผู้ใช้เป็นเจ้าของสินค้าหรือผู้สนใจ
-                $is_owner = ($user_id == $row['product_owner_id']);
-                $is_interested = ($user_id == $row['interested_user_id']);
+            // แสดงข้อมูลสินค้า
+            echo "<div class='product-info'>";
+            echo "<img src='uploads/" . htmlspecialchars($row['product_owner_product_image']) . "' alt='" . htmlspecialchars($row['product_owner_product_name']) . "'>";
+            echo "<div>"; // Div ครอบข้อความ
+            echo "<p><strong>สินค้าของ:</strong> " . htmlspecialchars($row['product_owner_name']) . "</p>";
+            echo "<p>" . htmlspecialchars($row['product_owner_product_name']) . "</p>";
+            echo "</div>";
+            echo "</div>";
 
-                // แสดงปุ่ม "แลกเปลี่ยนสำเร็จ" เฉพาะเมื่อผู้ใช้เกี่ยวข้องกับรายการนี้
-                if ($is_owner || $is_interested) {
-                    $button_text = "ยืนยันแลกเปลี่ยนสำเร็จ";
-                    $button_disabled = "";
+            echo "<div style='text-align: center; margin: 5px 0;'><i class='fas fa-exchange-alt'></i></div>"; // ไอคอนแลกเปลี่ยน
 
-                    if ($is_owner && $row['product_owner_confirm'] == 1) {
-                        $button_text = "รออีกฝ่ายยืนยัน";
-                        $button_disabled = "disabled";
-                    } elseif ($is_interested && $row['interested_user_confirm'] == 1) {
-                        $button_text = "รออีกฝ่ายยืนยัน";
-                        $button_disabled = "disabled";
+            echo "<div class='product-info'>";
+            echo "<img src='uploads/" . htmlspecialchars($row['interested_user_product_image']) . "' alt='" . htmlspecialchars($row['interested_user_product_name']) . "'>";
+            echo "<div>"; // Div ครอบข้อความ
+            echo "<p><strong>แลกกับสินค้าของ:</strong> " . htmlspecialchars($row['interested_user_name']) . "</p>";
+            echo "<p>" . htmlspecialchars($row['interested_user_product_name']) . "</p>";
+            echo "</div>";
+            echo "</div>";
+
+            echo "<p style='font-size: 0.85em; color: #6c757d;'><strong>วันที่จับคู่:</strong> " . date("d/m/Y H:i", strtotime($row['match_date'])) . "</p>";
+
+            // ส่วนของปุ่ม Actions
+            echo "<div class='actions'>";
+            // ปุ่มแชท
+            echo '<a href="chat.php?matchs_id=' . $row['matchs_id'] . '" class="chat-btn">แชท</a>';
+
+            // ปุ่มยืนยันการแลกเปลี่ยน
+            $button_text = "ยืนยันการแลกเปลี่ยน";
+            $button_disabled = "";
+            $status_text = "";
+
+            // ตรวจสอบว่าเป็นเจ้าของหรือผู้สนใจ
+            if ($user_id == $row['product_owner_id']) {
+                if ($row['owner_confirmed'] == 1) {
+                    $button_disabled = "disabled";
+                    $button_text = "ยืนยันแล้ว";
+                    if ($row['interested_confirmed'] == 0) {
+                        $status_text = "<span class='status-text'>(รอผู้สนใจยืนยัน)</span>";
                     }
-                    
-                    if($row['product_owner_confirm'] == 1 && $row['interested_user_confirm'] == 1){
-                        $button_text = "แลกเปลี่ยนสำเร็จ";
-                        $button_disabled = "disabled";
-                    }
-
-                    echo '<button class="complete-match-btn" data-matchs-id="' . $row['matchs_id'] . '" data-user-type="' . ($is_owner ? 'owner' : 'interested') . '" style="padding: 10px 20px; font-size: 16px; border: none; background: green; color: white; border-radius: 5px; cursor: pointer; margin-left: 10px;" ' . $button_disabled . '><strong>' . $button_text . '</strong></button>';
                 }
-                echo "</div>";
+            } elseif ($user_id == $row['interested_user_id']) {
+                if ($row['interested_confirmed'] == 1) {
+                    $button_disabled = "disabled";
+                    $button_text = "ยืนยันแล้ว";
+                     if ($row['owner_confirmed'] == 0) {
+                        $status_text = "<span class='status-text'>(รอเจ้าของยืนยัน)</span>";
+                    }
+                }
             }
-        } else {
-            echo "<p>ไม่มีรายการจับคู่</p>";
+
+            echo '<button class="confirm-exchange-btn" data-matchs-id="' . $row['matchs_id'] . '" ' . $button_disabled . '>' . $button_text . '</button>';
+            echo $status_text; // แสดงสถานะรอ
+
+            // ปุ่มยกเลิกการจับคู่
+            echo '<button class="cancel-match-btn" data-matchs-id="' . $row['matchs_id'] . '">ยกเลิกการจับคู่</button>';
+
+            echo "</div>"; // ปิด actions
+            echo "</div>"; // ปิด match-item
         }
-        ?>
-    </div>
-    <script>
-    $(document).ready(function() {
-        $('.cancel-match-btn').click(function() {
-            var matchsId = $(this).data('matchs-id');
-            if (confirm("คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการจับคู่นี้?")) {
-                $.ajax({
-                    url: 'cancel_match.php',
-                    type: 'POST',
-                    data: { matchs_id: matchsId },
-                    success: function(response) {
-                        if (response === 'success') {
-                            alert('ยกเลิกการจับคู่สำเร็จ');
-                            location.reload(); // รีโหลดหน้าเพื่ออัปเดตรายการ
-                        } else {
-                            alert('เกิดข้อผิดพลาดในการยกเลิกการจับคู่');
+    } else {
+        echo "<p style='text-align: center;'>ไม่มีรายการจับคู่</p>";
+    }
+    $stmt->close();
+    $conn->close();
+    ?>
+</div>
+
+<script>
+$(document).ready(function() {
+    // --- โค้ดสำหรับปุ่มยกเลิก (เหมือนเดิม) ---
+    $(".cancel-match-btn").click(function() {
+        const matchId = $(this).data("matchs-id");
+        const matchItemDiv = $("#match-item-" + matchId); // อ้างอิง div ของรายการ
+
+        if (confirm("คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการจับคู่นี้?")) {
+            $.ajax({
+                url: "cancel_match.php", // ตรวจสอบว่าไฟล์นี้ทำงานถูกต้อง
+                type: "POST",
+                dataType: "json", // คาดหวัง JSON response
+                data: { matchs_id: matchId },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        matchItemDiv.fadeOut(500, function() { $(this).remove(); }); // ลบรายการออกจากหน้าเว็บ
+                        // ตรวจสอบว่ามีรายการเหลืออยู่หรือไม่
+                        if ($(".match-item").length === 1) { // ถ้าลบอันสุดท้ายไปแล้ว
+                             $(".matchslist").append("<p style='text-align: center;'>ไม่มีรายการจับคู่</p>");
                         }
+                    } else {
+                        alert("เกิดข้อผิดพลาด: " + response.message);
                     }
-                });
-            }
-        });
-        $('.complete-match-btn').click(function() {
-            var matchsId = $(this).data('matchs-id');
-            var userType = $(this).data('user-type');
-            if (confirm("คุณแน่ใจหรือไม่ว่าการแลกเปลี่ยนนี้สำเร็จแล้ว?")) {
-                $.ajax({
-                    url: 'complete_match.php',
-                    type: 'POST',
-                    data: { matchs_id: matchsId, user_type: userType },
-                    success: function(response) {
-                        if (response === 'success') {
-                            alert('บันทึกการแลกเปลี่ยนสำเร็จ');
-                            // ไม่ต้องรีโหลดหน้าแล้ว เพราะรายการจะหายไปเอง
-                            //location.reload();
-                        } else if (response === 'waiting') {
-                            alert('รออีกฝ่ายยืนยัน');
-                            location.reload();
-                        } else {
-                            alert('เกิดข้อผิดพลาดในการบันทึกการแลกเปลี่ยน');
+                },
+                error: function(xhr, status, error) {
+                     // แสดงข้อผิดพลาดที่ละเอียดขึ้น (สำหรับ debug)
+                     console.error("AJAX Error:", status, error);
+                     console.error("Response Text:", xhr.responseText);
+                     alert("เกิดข้อผิดพลาดในการสื่อสารกับเซิร์ฟเวอร์ โปรดลองอีกครั้ง");
+                }
+            });
+        }
+    });
+
+    // --- โค้ดใหม่สำหรับปุ่มยืนยันการแลกเปลี่ยน ---
+    $(".confirm-exchange-btn").click(function() {
+        const matchId = $(this).data("matchs-id");
+        const button = $(this); // เก็บ element ของปุ่มที่ถูกคลิก
+        const matchItemDiv = $("#match-item-" + matchId); // อ้างอิง div ของรายการ
+
+        // ไม่ต้องมี confirm() เพราะการกดยืนยันควรทำได้เลย
+        button.prop('disabled', true).text('กำลังดำเนินการ...'); // ป้องกันการกดซ้ำ
+
+        $.ajax({
+            url: "confirm_exchange.php", // ไฟล์ PHP ที่จะสร้างใหม่
+            type: "POST",
+            dataType: "json", // คาดหวัง JSON response
+            data: { matchs_id: matchId },
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert(response.message); // แสดงข้อความจาก server
+                    if (response.action === 'completed') {
+                        // ถ้าแลกเปลี่ยนสำเร็จ ให้ลบรายการนี้ออกจากหน้า
+                        matchItemDiv.fadeOut(500, function() { $(this).remove(); });
+                         // ตรวจสอบว่ามีรายการเหลืออยู่หรือไม่
+                        if ($(".match-item").length === 1) {
+                             $(".matchslist").append("<p style='text-align: center;'>ไม่มีรายการจับคู่</p>");
                         }
+                    } else if (response.action === 'confirmed') {
+                        // ถ้ายืนยันฝ่ายเดียวสำเร็จ
+                        button.text('ยืนยันแล้ว'); // เปลี่ยนข้อความปุ่ม
+                        // อาจจะเพิ่มข้อความ "(รออีกฝ่ายยืนยัน)" ต่อท้ายปุ่ม
+                        button.after("<span class='status-text'>(รออีกฝ่ายยืนยัน)</span>");
+                    } else {
+                         // กรณีอื่นๆ ที่อาจเกิดขึ้น (ไม่น่ามีถ้า logic ถูก)
+                         button.prop('disabled', false).text('ยืนยันการแลกเปลี่ยน'); // คืนค่าปุ่ม
                     }
-                });
+                } else {
+                    // แสดงข้อผิดพลาดจาก server
+                    alert("เกิดข้อผิดพลาด: " + response.message);
+                    button.prop('disabled', false).text('ยืนยันการแลกเปลี่ยน'); // คืนค่าปุ่มให้กดใหม่ได้
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("AJAX Error:", status, error);
+                console.error("Response Text:", xhr.responseText);
+                alert("เกิดข้อผิดพลาดในการสื่อสารกับเซิร์ฟเวอร์ โปรดลองอีกครั้ง");
+                button.prop('disabled', false).text('ยืนยันการแลกเปลี่ยน'); // คืนค่าปุ่ม
             }
         });
     });
+});
 </script>
 </body>
 </html>

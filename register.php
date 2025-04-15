@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css">
     <link rel="stylesheet" href="register.css">
 </head>
 <body>
@@ -27,11 +28,10 @@
             $tel = $_POST['tel'];
             $birth_date = $_POST['birth_date'];
             $address = $_POST['address'];
-            $community = $_POST['community'];
        
             $errors = array();
 
-            if(empty($email) OR empty($password) OR empty($password_con) OR empty($first_name) OR empty($last_name) OR empty($gender) OR empty($tel) OR empty($birth_date) OR empty($address)OR empty($community)) {
+            if(empty($email) OR empty($password) OR empty($password_con) OR empty($first_name) OR empty($last_name) OR empty($gender) OR empty($tel) OR empty($birth_date) OR empty($address)) {
 
                 array_push($errors, "กรุณากรอกข้อมูลให้ครบ");
        
@@ -84,10 +84,6 @@
 
             array_push($errors, "กรุณากรอกที่อยู่");
         }
-        if(empty($community)) {
-
-            array_push($errors, "กรุณากรอกชุมชน");
-        }
         $sql_users = "SELECT * FROM users WHERE email = '$email'";
 
         $result_users = mysqli_query($conn, $sql_users);
@@ -106,11 +102,11 @@
                     </div>";
             }
         } else {
-            $sql_insert_user = "INSERT INTO users(email, password, firstname, lastname, gender, tel, birth_date, address, community) 
-            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $sql_insert_user = "INSERT INTO users(email, password, firstname, lastname, gender, tel, birth_date, address) 
+            VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = mysqli_stmt_init($conn);
             if(mysqli_stmt_prepare($stmt, $sql_insert_user)) {
-                mysqli_stmt_bind_param($stmt, "sssssssss", $email, $password, $first_name, $last_name, $gender, $tel, $birth_date, $address, $community);
+                mysqli_stmt_bind_param($stmt, "ssssssss", $email, $password, $first_name, $last_name, $gender, $tel, $birth_date, $address);
                 mysqli_stmt_execute($stmt);
                 echo "<div class='alert alert-success'>คุณได้ลงทะเบียนเรียบร้อยแล้ว!</div>";
             } else {
@@ -189,17 +185,12 @@
         </div>
         </div>
 
-        <div class="row mb-3">
-        <div class="col-md-6">
+        <div class="form-group">
             <label for="address" class="form-label">ที่อยู่บ้าน</label>
             <input type="text" name="address" id="address" placeholder="กรอกที่อยู่" class="form-control">
         </div>
 
-        <div class="col-md-6">
-            <label for="community" class="form-label">ชุมชนที่อยู่</label>
-            <input type="text" name="community" id="community" placeholder="กรอกชุมชนที่อยู่" class="form-control">
-        </div>
-
+        <div class="row mb-3">
         <input type="submit" value="ยืนยัน" name="reg" >
         <p class="register-info">มีบัญชีอยู่แล้ว <span><a href="Login.php">ไปยังหน้าเข้าสู่ระบบ</a></span></p>
 
@@ -209,5 +200,20 @@
 
     </div>
     </form>
+    <script src="https://cdn.jsdelivr.net/npm/pikaday/pikaday.js"></script>
+<script>
+    var picker = new Pikaday({
+        field: document.querySelector("input[name='birth_date']"),
+        format: "YYYY-MM-DD",
+        maxDate: new Date(),
+        yearRange: [1900, new Date().getFullYear()],
+        toString(date, format) {
+            const day = ("0" + date.getDate()).slice(-2);
+            const month = ("0" + (date.getMonth() + 1)).slice(-2);
+            const year = date.getFullYear();
+            return `${year}-${month}-${day}`;
+        }
+    });
+</script>
 </body>
 </html>

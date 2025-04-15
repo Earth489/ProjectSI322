@@ -17,6 +17,9 @@ $sql = "SELECT i.*, p.product_Name, p.Image AS product_image, u.firstname, u.las
         JOIN users u ON i.user_id = u.user_id
         WHERE p.user_id = ? AND i.status = 'pending'";
 $stmt = $conn->prepare($sql);
+if (!$stmt) { // เพิ่มการตรวจสอบ prepare statement
+    die("Prepare failed (main query): (" . $conn->errno . ") " . $conn->error);
+}
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -82,17 +85,16 @@ $result = $stmt->get_result();
             cursor: pointer;
             font-size: 14px;
             margin-top: 5px;
+            width: 100px; /* หรือขนาดที่ต้องการ */
         }
         .cancel-button:hover {
             opacity: 0.8;
         }
         /* CSS ใหม่สำหรับจัดตำแหน่งปุ่ม */
         .button-container {
-            display: flex;
-            justify-content: flex-start; /* จัดให้ปุ่มอยู่ชิดซ้าย */
             align-items: center; /* จัดให้ปุ่มอยู่ตรงกลางแนวตั้ง */
             margin-top: 10px; /* เพิ่มระยะห่างด้านบน */
-            gap: 10px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+            margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่าง */;
         }
 
         .match-button {
@@ -103,6 +105,8 @@ $result = $stmt->get_result();
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
+            width: 100px;
+            margin-right: 10px;
         }
 
         .match-button:hover {
@@ -144,6 +148,7 @@ $result = $stmt->get_result();
         </span>
     </a>
     <div class="navbar-center">
+        <a href="myproduct.php">สินค้าของฉัน</a>
         <a href="notification.php">แจ้งเตือน</a>
         <a href="matchslist.php">รายการจับคู่</a>
         <a href="history.php">ดูประวัติการแลกเปลี่ยน</a>
@@ -151,6 +156,7 @@ $result = $stmt->get_result();
     <div class="navbar-right">
         <a href="profile.php"><span><i class="fa-regular fa-user"></i></span></a>
     </div>
+</div>
 </div>
     <main>
         <h1>แจ้งเตือน</h1>
@@ -160,11 +166,11 @@ $result = $stmt->get_result();
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <li>
                         <!-- แสดงรูปภาพสินค้าที่ถูกกดสนใจ -->
-                        <img src="uploads/<?php echo $row['product_image']; ?>" alt="<?php echo $row['product_Name']; ?>" class="interested-product-image">
-                        <p><strong>สินค้าของคุณ:</strong> <?php echo $row['product_Name']; ?></p>
-                        <p><strong>ผู้สนใจ:</strong> <?php echo $row['firstname'] . ' ' . $row['lastname']; ?></p>
-                        <p><strong>เบอร์โทร:</strong> <?php echo $row['tel']; ?></p>
-                        <p><strong>วันที่สนใจ:</strong> <?php echo $row['interested_date']; ?></p>
+                        <img src="uploads/<?php echo htmlspecialchars($row['product_image']); ?>" alt="<?php echo htmlspecialchars($row['product_Name']); ?>" class="interested-product-image">
+                        <p><strong>สินค้าของคุณ:</strong> <?php echo htmlspecialchars($row['product_Name']); ?></p>
+                        <p><strong>ผู้สนใจ:</strong> <?php echo htmlspecialchars($row['firstname'] . ' ' . $row['lastname']); ?></p>
+                        <p><strong>เบอร์โทร:</strong> <?php echo htmlspecialchars($row['tel']); ?></p>
+                        <p><strong>วันที่สนใจ:</strong> <?php echo date("d/m/Y H:i", strtotime($row['interested_date'])); ?></p>
 
                         <!-- แสดงรายการสินค้าของผู้สนใจ -->
                         <div class="product-list">
@@ -175,6 +181,13 @@ $result = $stmt->get_result();
                                 // แก้ไขคำสั่ง SQL เพื่อดึงข้อมูลเพิ่มเติม
                                 $product_sql = "SELECT product_Id, product_Name, product_detail, Image, product_price, Product_exchanged, product_category FROM product WHERE user_id = ?";
                                 $product_stmt = $conn->prepare($product_sql);
+                                // เพิ่มการตรวจสอบ prepare statement
+                                if (!$product_stmt) {
+                                    // จัดการข้อผิดพลาด เช่น แสดงข้อความ หรือ log ไว้
+                                    // error_log("Prepare failed (interested user products): (" . $conn->errno . ") " . $conn->error);
+                                    echo "<p>เกิดข้อผิดพลาดในการดึงข้อมูลสินค้าของผู้สนใจ</p>";
+                                    continue; // ข้ามไปรายการแจ้งเตือนถัดไป
+                                }
                                 $product_stmt->bind_param("i", $interested_user_id);
                                 $product_stmt->execute();
                                 $product_result = $product_stmt->get_result();
@@ -183,37 +196,52 @@ $result = $stmt->get_result();
                                     echo "<ul>";
                                     $has_product = true; // เพิ่มตัวแปรตรวจสอบว่ามีสินค้าหรือไม่
                                     while ($product_row = $product_result->fetch_assoc()) {
-                                        // ตรวจสอบว่าสินค้าถูกจับคู่แล้วหรือไม่
-                                        $match_sql = "SELECT * FROM matchs WHERE (product_owner_product_id = ? OR interested_user_product_id = ?) AND status != 'completed' AND status != 'canceled'";
+                                        // --- โค้ดที่แก้ไข ---
+                                        // ตรวจสอบว่าสินค้าถูกจับคู่ในสถานะ active หรือ completed หรือไม่
+                                        $match_sql = "SELECT matchs_id FROM matchs WHERE (product_owner_product_id = ? OR interested_user_product_id = ?) AND (status = 'active' OR status = 'completed')";
                                         $match_stmt = $conn->prepare($match_sql);
+                                        // เพิ่มการตรวจสอบ prepare statement เพื่อความปลอดภัย
+                                        if (!$match_stmt) {
+                                            // จัดการข้อผิดพลาด เช่น แสดงข้อความ หรือ log ไว้
+                                            // error_log("Prepare failed (match check): (" . $conn->errno . ") " . $conn->error);
+                                            continue; // ข้ามไปสินค้าถัดไปถ้า prepare ล้มเหลว
+                                        }
                                         $match_stmt->bind_param("ii", $product_row['product_Id'], $product_row['product_Id']);
                                         $match_stmt->execute();
                                         $match_result = $match_stmt->get_result();
 
-                                        if ($match_result->num_rows == 0) { // ถ้าไม่พบในตาราง matchs
+                                        // ถ้าไม่พบรายการจับคู่ที่ active หรือ completed ให้แสดงสินค้านี้
+                                        if ($match_result->num_rows == 0) {
                                             echo "<li>";
-                                            echo "<img src='uploads/".$product_row['Image']."' alt='".$product_row['product_Name']."'>";
-                                            // ตรวจสอบว่า $has_product เป็น true ก่อนแสดง radio button
-                                            if ($has_product) {
-                                                echo "<p><input type='radio' name='selected_product_id[".$row['interested_id']."]' value='".$product_row['product_Id']."'> ".$product_row['product_Name']."</p>";
-                                            }
+                                            echo "<img src='uploads/".htmlspecialchars($product_row['Image'])."' alt='".htmlspecialchars($product_row['product_Name'])."'>";
+                                            // ตรวจสอบว่า $has_product เป็น true ก่อนแสดง radio button (อาจจะไม่จำเป็นแล้ว)
+                                            // if ($has_product) {
+                                                echo "<p><input type='radio' name='selected_product_id[".$row['interested_id']."]' value='".$product_row['product_Id']."'> ".htmlspecialchars($product_row['product_Name'])."</p>";
+                                            // }
                                             // เพิ่มข้อมูล product_detail, product_price, Product_exchanged, product_category
-                                            echo "<p><strong>รายละเอียด:</strong> ".$product_row['product_detail']."</p>";
-                                            echo "<p><strong>ราคา:</strong> ".$product_row['product_price']." บาท</p>";
-                                            echo "<p><strong>สินค้าแลกเปลี่ยน:</strong> ".$product_row['Product_exchanged']."</p>";
-                                            echo "<p><strong>ประเภทสินค้า:</strong> ".$product_row['product_category']."</p>";
+                                            echo "<p><strong>รายละเอียด:</strong> ".htmlspecialchars($product_row['product_detail'])."</p>";
+                                            echo "<p><strong>ราคา:</strong> ".htmlspecialchars($product_row['product_price'])." บาท</p>";
+                                            echo "<p><strong>สินค้าแลกเปลี่ยน:</strong> ".htmlspecialchars($product_row['Product_exchanged'])."</p>";
+                                            echo "<p><strong>ประเภทสินค้า:</strong> ".htmlspecialchars($product_row['product_category'])."</p>";
                                             echo "</li>";
                                         }
+                                        // ปิด statement ที่ใช้เสร็จแล้ว
+                                        $match_stmt->close();
+                                        // --- จบโค้ดที่แก้ไข ---
                                     }
                                     echo "</ul>";
                                 } else {
                                     echo "<p>ไม่มีสินค้า</p>";
                                     $has_product = false; // กำหนดค่าเป็น false เมื่อไม่มีสินค้า
                                 }
+                                // ปิด statement ที่ใช้เสร็จแล้ว
+                                $product_stmt->close();
                             ?>
                         </div>
                         <div class="button-container">
-                            <button type="submit" class="match-button">จับคู่</button>
+                            <?php if ($has_product): // แสดงปุ่มจับคู่เฉพาะเมื่อผู้สนใจมีสินค้าให้เลือก ?>
+                                <button type="submit" class="match-button">จับคู่</button>
+                            <?php endif; ?>
                             <input type="hidden" name="product_owner_id" value="<?php echo $user_id; ?>">
                             <input type="hidden" name="product_owner_product_id" value="<?php echo $row['product_id']; ?>">
                             <input type="hidden" name="interested_user_id" value="<?php echo $row['user_id']; ?>">
@@ -226,6 +254,7 @@ $result = $stmt->get_result();
         <?php else: ?>
             <p>ไม่มีการแจ้งเตือน</p>
         <?php endif; ?>
+        <?php $stmt->close(); // ปิด statement หลัก ?>
     </main>
 </body>
 </html>
