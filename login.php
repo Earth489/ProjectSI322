@@ -21,52 +21,62 @@
         <form action="Login.php" method="POST">
         <?php 
         
-            if(isset($_POST['enter'])) {
+        if(isset($_POST['enter'])) {
 
-                $email = $_POST['email'];
-                $password = $_POST['pws'];
+            // 1. เปลี่ยนชื่อตัวแปรที่รับจากฟอร์ม
+            $username_input = $_POST['username'];
+            $password_input = $_POST['pws'];
 
-                $sql_user = "SELECT * FROM users WHERE email = '$email'";
-                $result_users = mysqli_query($conn, $sql_user);
+            // ⚠️ 2. ใช้ Prepared Statements เพื่อป้องกัน SQL Injection
+            // ตรวจสอบว่า $conn มีอยู่จริงก่อนใช้ prepare
+            if ($conn) {
+                $stmt = $conn->prepare("SELECT user_id, username, password FROM users WHERE username = ?");
+                $stmt->bind_param("s", $username_input);
+                $stmt->execute();
+                $result_users = $stmt->get_result();
                 
+                // 3. เปลี่ยนชื่อตัวแปรที่ดึงจากฐานข้อมูล
+                $user_data = $result_users->fetch_assoc();
+                $stmt->close();
+            } else {
+                // จัดการข้อผิดพลาดถ้า $conn ไม่มีค่า (ปัญหา require 'connection.php')
+                $user_data = false;
+                echo "<div class='alert alert-danger'>ข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล</div>";
+            }
+            
+            // 4. ตรวจสอบข้อมูลที่ดึงมา
+            if($user_data) {
 
-                $email = mysqli_fetch_array($result_users, MYSQLI_ASSOC);
+                // ⚠️ ควรใช้ password_verify() ถ้าคุณมีการแฮชรหัสผ่านใน DB
+                if($password_input === $user_data['password']) {
+                //if (password_verify($password_input, $user_data['password'])) { // ถ้าใช้ Hashed Password
 
-                if($email) {
-
-                    if($password === $email['password']) {
-
-                        if($email['user_type'] === 'user') {
-
-                            $_SESSION['user_email'] = $email["email"];
-                            $_SESSION['user_id'] = $email["user_id"];
-                            header("Location: main_product_post.php");
-                            exit();
-                        } elseif ($email['user_type'] === 'admin') {
-
-                            $_SESSION['admin_email'] = $email['email'];
-                            $_SESSION['admin_id'] = $email['user_id'];
-                            header("Location: adminPage.php");
-                            exit();
-
-                        }
-                    } else {
-
-                        echo "<div class='alert alert-danger'>กรุณากรอกรหัสผ่านที่ถูกต้อง</div>";
-                    }
-
+                    // 5. ลบเงื่อนไขการตรวจสอบประเภทผู้ใช้ออก (ทำให้ล็อกอินแล้วเด้งไปหน้าอื่นได้)
+                    
+                    $_SESSION['username'] = $user_data["username"];
+                    $_SESSION['user_id'] = $user_data["user_id"];
+                    
+                    header("Location: homepage.php");
+                    exit();
+                    
                 } else {
 
-                    echo "<div class='alert alert-danger'>ไม่พบอีเมลผู้ใช้</div>";
-                        
+                    echo "<div class='alert alert-danger'>กรุณากรอกรหัสผ่านที่ถูกต้อง</div>";
                 }
+
+            } else {
+
+                echo "<div class='alert alert-danger'>ไม่พบชื่อผู้ใช้</div>"; // เปลี่ยนจาก 'อีเมล' เป็น 'ชื่อผู้ใช้' ตามฟอร์ม
+                    
             }
-        ?>
+        }
+    ?>
+
 
         <h1 class="mb-4">เข้าสู่ระบบ</h1>
         <div class="mb-3 text-start">
-            <label for="email" class="form-label">E-mail</label>
-            <input type="email" name="email" id="email" placeholder="E-mail" class="form-control">
+            <label for="username" class="form-label">Username</label>
+            <input type="username" name="username" id="username" placeholder="Username" class="form-control">
         </div>
         <div class="mb-3 text-start">
             <label for="pws" class="form-label">รหัสผ่าน</label>
@@ -75,7 +85,6 @@
         
         <button type="submit" name="enter" class="btn-login">เข้าสู่ระบบ</button>
         <div class="divider"></div>
-        <a href="Register.php">สมัครสมาชิก</a>
     </form>
 </body>
 </html>

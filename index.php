@@ -1,14 +1,14 @@
 <?php 
     session_start();
 
-    if (!isset($_SESSION['email'])){
+    if (!isset($_SESSION['username'])){
         $_SESSION['msg'] = "You must log in first";
         header('location: login.php');
     }
 
     if (isset($_GET['logout'])) {
         session_destroy();
-        unset($_SESSION['email']);
+        unset($_SESSION['username']);
         header('location: login.php');
     }
 
@@ -38,8 +38,8 @@
                 </h3> 
             </div>   
         <!--เช็คล็อคอิน -->
-        <?php if (isset($_SESSION['email'])): ?>
-        <p> Hello<stong><?php echo $_SESSION['email']; ?></stong></p>
+        <?php if (isset($_SESSION['username'])): ?>
+        <p> Hello<stong><?php echo $_SESSION['username']; ?></stong></p>
         <p><a href="index.php?logout='1'" style="color: red;" >logout</a></a></p>
         <?php endif ?>
     </div>
